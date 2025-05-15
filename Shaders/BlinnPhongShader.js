@@ -15,36 +15,35 @@ export const BlinnPhongShader = {
     fragment: `
         varying vec3 vNormal;
         varying vec3 vWorldPosition;
-        uniform vec3 lightPosition;
-        uniform vec3 lightColor;
+        uniform vec3 lightPositions[10];
+        uniform vec3 lightColors[10];
         uniform float specularPower;
         uniform vec3 diffuseColor;
         uniform float diffuseStrength;
         uniform float specularStrength;
+        uniform vec3 ambientColor;
+        uniform float ambientStrength;
         
         void main() {
-            // Light direction
-            vec3 lightDir = normalize(lightPosition - vWorldPosition);
+            vec3 totalLight = vec3(0.0);
             
-            // View direction
-            vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+            // Ambient lighting
+            vec3 ambient = ambientColor * ambientStrength;
             
-            // Halfway vector
-            vec3 halfwayDir = normalize(lightDir + viewDir);
+            // Process each light
+            for(int i = 0; i < 10; i++) {
+                
+                vec3 lightDir = normalize(lightPositions[i] - vWorldPosition);
+                vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                vec3 halfwayDir = normalize(lightDir + viewDir);
+                
+                float diffuse = max(dot(normalize(vNormal), lightDir), 0.0);
+                float specular = pow(max(dot(normalize(vNormal), halfwayDir), 0.0), specularPower);
+                
+                totalLight += (diffuse * diffuseStrength + specular * specularStrength) * lightColors[i];
+            }
             
-            // Diffuse calculation
-            float diffuse = max(dot(normalize(vNormal), lightDir), 0.0);
-            
-            // Blinn-Phong specular calculation
-            float specular = pow(
-                max(dot(normalize(vNormal), halfwayDir), 0.0),
-                specularPower
-            );
-            
-            // Combine lighting components
-            vec3 lighting = (diffuse * diffuseStrength + specular * specularStrength) * lightColor;
-            gl_FragColor = vec4(diffuseColor * lighting, 1.0);
+            gl_FragColor = vec4(diffuseColor * (ambient + totalLight), 1.0);
         }
     `
-
 };

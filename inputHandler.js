@@ -124,7 +124,11 @@ export class InputHandler {
                     {
                         diffuseColor: { value: uniforms.diffuseColor.value.clone() },
                         diffuseStrength: { value: uniforms.diffuseStrength.value },
-                        specularStrength: { value: uniforms.specularStrength.value }
+                        specularStrength: { value: uniforms.specularStrength.value },
+                        ambientColor: { value: uniforms.ambientColor.value.clone() },
+                        ambientStrength: { value: uniforms.ambientStrength.value },
+                        lightPositions: { value: uniforms.lightPositions.value.slice() },
+                        lightColors: { value: uniforms.lightColors.value.slice() }
                     }
                 ]);
 

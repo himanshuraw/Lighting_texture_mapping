@@ -2,6 +2,7 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.128.0';
 import { InputHandler } from "./inputHandler.js";
 import { TrackballControls } from './trackballControls.js';
 import { createShader } from './shader.js';
+import { Lighting } from './lighting.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -12,11 +13,14 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(canvas);
 
 const shaders = createShader(camera);
-
-const inputHandler = new InputHandler(scene, camera, canvas, shaders);
+new InputHandler(scene, camera, canvas, shaders);
 const trackball = new TrackballControls(camera, canvas);
 trackball.setTarget(new THREE.Vector3(0, 0, 0))
 
+const lighting = new Lighting(scene);
+lighting.addAmbientLight(0x404040, 0.5);
+lighting.addPointLight(0x606060, 1, new THREE.Vector3(5, 5, 5))
+lighting.addPointLight(0x404040, 1, new THREE.Vector3(0, 5, 5))
 
 const dominoCount = 9;
 const spacing = 1.3;
@@ -41,20 +45,19 @@ for (let i = 0; i < dominoCount; i++) {
     scene.add(domino);
 }
 
-camera.position.set(0, 0, 12);
-const light = new THREE.PointLight(0xffffff, 1);
-light.position.set(5, 5, 5);
-scene.add(light);
+camera.position.set(10, 5, 10);
+camera.lookAt(0, 0, 0);
+
 
 function animate() {
     requestAnimationFrame(animate);
 
-    scene.children.forEach(child => {
-        if (child instanceof THREE.Mesh) {
-            child.material.uniforms.cameraPosition.value.copy(camera.position);
-            child.material.uniforms.lightPosition.value.copy(light.position);
-        }
-    });
+    const materials = scene.children
+        .filter(child => child instanceof THREE.Mesh)
+        .map(child => child.material);
+
+    lighting.updateShaderUniforms(materials);
+
 
     renderer.render(scene, camera);
 }
