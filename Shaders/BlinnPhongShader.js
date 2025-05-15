@@ -1,9 +1,8 @@
-export const PhongShader = {
+export const BlinnPhongShader = {
     vertex: `
         varying vec3 vNormal;
-        varying vec3 vViewPosition;
         varying vec3 vWorldPosition;
-        uniform vec3 diffuseColor;
+        varying vec3 vViewPosition;
         
         void main() {
             vNormal = normalize(normalMatrix * normal);
@@ -16,7 +15,6 @@ export const PhongShader = {
     fragment: `
         varying vec3 vNormal;
         varying vec3 vWorldPosition;
-        varying vec3 vViewPosition;
         uniform vec3 lightPosition;
         uniform vec3 lightColor;
         uniform float specularPower;
@@ -25,17 +23,28 @@ export const PhongShader = {
         uniform float specularStrength;
         
         void main() {
-            // Diffuse lighting
+            // Light direction
             vec3 lightDir = normalize(lightPosition - vWorldPosition);
+            
+            // View direction
+            vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+            
+            // Halfway vector
+            vec3 halfwayDir = normalize(lightDir + viewDir);
+            
+            // Diffuse calculation
             float diffuse = max(dot(normalize(vNormal), lightDir), 0.0);
             
-            // Specular lighting
-            vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-            vec3 reflectDir = reflect(-lightDir, normalize(vNormal));
-            float specular = pow(max(dot(viewDir, reflectDir), 0.0), specularPower);
+            // Blinn-Phong specular calculation
+            float specular = pow(
+                max(dot(normalize(vNormal), halfwayDir), 0.0),
+                specularPower
+            );
             
+            // Combine lighting components
             vec3 lighting = (diffuse * diffuseStrength + specular * specularStrength) * lightColor;
             gl_FragColor = vec4(diffuseColor * lighting, 1.0);
         }
     `
+
 };

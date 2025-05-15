@@ -23,8 +23,13 @@ const spacing = 1.3;
 const startX = -((dominoCount - 1) * spacing) / 2;
 
 for (let i = 0; i < dominoCount; i++) {
+<<<<<<< HEAD
     const geometry = new THREE.BoxGeometry(0.4, 1.5, 0.8, 4, 4, 4);
     const domino = new THREE.Mesh(geometry, shaders.gouraud);
+=======
+    const geometry = new THREE.BoxGeometry(0.4, 1.5, 0.8);
+    const domino = new THREE.Mesh(geometry, shaders.gouraud.clone());
+>>>>>>> e9c3cb8 (Added blinnphong)
 
     const diffuseStrength = (i % 3) * 0.5;;
     const specularStrength = Math.floor(i / 3) * 0.5;

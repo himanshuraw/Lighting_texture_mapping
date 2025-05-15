@@ -9,7 +9,6 @@ export class InputHandler {
         this.shaders = shaders;
 
         this.keys = new Set();
-        this.currentShader = 'gouraud';
 
         this.mouse = {
             x: 0, y: 0, dx: 0, dy: 0,
@@ -17,9 +16,15 @@ export class InputHandler {
         };
 
         this.trackballControls = new TrackballControls(camera, canvas);
+<<<<<<< HEAD
         this.zoomSpeed = 0.5; // Adjust zoom sensitivity
         this.minDistance = 2; // Minimum distance from target
         this.maxDistance = 20; // Maximum distance from target
+=======
+        this.zoomSpeed = 0.5;
+        this.minDistance = 2;
+        this.maxDistance = 20;
+>>>>>>> e9c3cb8 (Added blinnphong)
 
         this.init();
     }
@@ -94,7 +99,7 @@ export class InputHandler {
         this.keys.add(key);
 
         switch (key) {
-            case 'shift':
+            case 's':
                 this.toggleShading();
                 break;
             default:
@@ -107,12 +112,18 @@ export class InputHandler {
     }
 
     toggleShading() {
-        this.currentShader = this.currentShader === 'phong' ? 'gouraud' : 'phong';
-
         this.scene.children.forEach(child => {
             if (child instanceof THREE.Mesh) {
+                const currentShader = child.material.name;
+                const newShader = currentShader === 'blinnphong' ? 'gouraud' : 'blinnphong';
+
+                if (!this.shaders[newShader]) {
+                    console.error(`Shader ${newShader} not found!`);
+                    return;
+                }
+
                 const uniforms = child.material.uniforms;
-                const newMaterial = this.shaders[this.currentShader].clone();
+                const newMaterial = this.shaders[newShader].clone();
 
                 newMaterial.uniforms = THREE.UniformsUtils.merge([
                     newMaterial.uniforms,
@@ -123,8 +134,14 @@ export class InputHandler {
                     }
                 ]);
 
+                newMaterial.name = newShader;
                 child.material = newMaterial;
             }
         });
+
+        const firstMesh = this.scene.children.find(c => c instanceof THREE.Mesh);
+        if (firstMesh) {
+            console.log('Current Shader:', firstMesh.material.name);
+        }
     }
 }
