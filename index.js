@@ -5,7 +5,7 @@ import { createShader } from './shader.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 const canvas = renderer.domElement;
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -23,28 +23,27 @@ const spacing = 1.3;
 const startX = -((dominoCount - 1) * spacing) / 2;
 
 for (let i = 0; i < dominoCount; i++) {
-    const geometry = new THREE.BoxGeometry(0.4, 1.5, 0.8);
+    const geometry = new THREE.BoxGeometry(0.4, 1.5, 0.8, 4, 4, 4);
     const domino = new THREE.Mesh(geometry, shaders.gouraud);
 
-    const row = Math.floor(i / 3);
-    const col = i % 3;
-
-    const diffuseStrength = row * 0.5;
-    const specularStrength = col * 0.5;
+    const diffuseStrength = (i % 3) * 0.5;;
+    const specularStrength = Math.floor(i / 3) * 0.5;
 
     domino.material.uniforms = {
         ...domino.material.uniforms,
-        diffuseColor: { value: new THREE.Color().setHSL(i / dominoCount, 0.7, 0.5) },
+        diffuseColor: { value: new THREE.Color(0.8, 0.8, 0.8) },
         diffuseStrength: { value: diffuseStrength },
         specularStrength: { value: specularStrength }
     };
 
 
     domino.position.x = startX + i * spacing;
+    domino.position.y = 0; // Ensure y is 0
+    domino.position.z = 0; // Ensure z is 0
     scene.add(domino);
 }
 
-camera.position.z = 12;
+camera.position.set(0, 0, 12);
 const light = new THREE.PointLight(0xffffff, 1);
 light.position.set(5, 5, 5);
 scene.add(light);

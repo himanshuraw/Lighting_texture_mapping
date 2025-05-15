@@ -17,7 +17,7 @@ export class InputHandler {
         };
 
         this.trackballControls = new TrackballControls(camera, canvas);
-        this.zoomSpeed = 0.1; // Adjust zoom sensitivity
+        this.zoomSpeed = 0.5; // Adjust zoom sensitivity
         this.minDistance = 2; // Minimum distance from target
         this.maxDistance = 20; // Maximum distance from target
 
@@ -79,8 +79,6 @@ export class InputHandler {
         // Calculate the zoom step
         const zoomStep = direction * this.zoomSpeed;
         const newDistance = distance + zoomStep;
-
-        console.log(`Distance: ${distance}, New Distance: ${newDistance}, Zoom Step: ${zoomStep}`);
 
         // Check if the new distance is within bounds
         if (newDistance >= this.minDistance && newDistance <= this.maxDistance) {
