@@ -19,8 +19,26 @@ trackball.setTarget(new THREE.Vector3(0, 0, 0))
 
 const lighting = new Lighting(scene);
 lighting.addAmbientLight(0x404040, 0.5);
-lighting.addPointLight(0x606060, 1, new THREE.Vector3(5, 5, 5))
-lighting.addPointLight(0x404040, 1, new THREE.Vector3(0, 5, 5))
+lighting.addPointLight(0xffffff, 1.5, new THREE.Vector3(0, 5, 5));
+lighting.addPointLight(0xffffff, 1.0, new THREE.Vector3(-5, 3, 2));
+
+camera.position.set(10, 3, -4);
+camera.lookAt(0, 0, 0);
+
+const groundGeometry = new THREE.PlaneGeometry(20, 20);
+const groundMaterial = shaders.gouraud.clone();
+groundMaterial.uniforms = {
+    ...groundMaterial.uniforms,
+    diffuseColor: { value: new THREE.Color(0.6, 0.7, 0.8) },
+    diffuseStrength: { value: 0.7 },
+    specularStrength: { value: 0.1 }
+};
+
+const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.75;
+scene.add(ground);
+
 
 const dominoCount = 9;
 const spacing = 1.3;
@@ -44,9 +62,6 @@ for (let i = 0; i < dominoCount; i++) {
     domino.position.x = startX + i * spacing;
     scene.add(domino);
 }
-
-camera.position.set(10, 5, 10);
-camera.lookAt(0, 0, 0);
 
 
 function animate() {
