@@ -16,15 +16,9 @@ export class InputHandler {
         };
 
         this.trackballControls = new TrackballControls(camera, canvas);
-<<<<<<< HEAD
-        this.zoomSpeed = 0.5; // Adjust zoom sensitivity
-        this.minDistance = 2; // Minimum distance from target
-        this.maxDistance = 20; // Maximum distance from target
-=======
         this.zoomSpeed = 0.5;
         this.minDistance = 2;
         this.maxDistance = 20;
->>>>>>> e9c3cb8 (Added blinnphong)
 
         this.init();
     }
