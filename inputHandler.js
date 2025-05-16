@@ -167,10 +167,6 @@ export class InputHandler {
                 const uniforms = child.material.uniforms;
                 if (uniforms?.mappingType) {
                     uniforms.mappingType.value = (uniforms.mappingType.value + 1) % 3;
-                    // const current = uniforms.mappingType.value;
-                    // if (current === 0 || current === 1) {
-                    //     uniforms.mappingType.value = 1 - current;
-                    // }
                 }
             }
         });
