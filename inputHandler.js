@@ -92,6 +92,9 @@ export class InputHandler {
             case 's':
                 this.toggleShading();
                 break;
+            case 'm':
+                this.toggleMapping();
+                break;
             default:
                 break;
         }
@@ -102,8 +105,10 @@ export class InputHandler {
     }
 
     toggleShading() {
+        const groundGeometry = this.scene.children.find(c => c.geometry instanceof THREE.PlaneGeometry);
+
         this.scene.children.forEach(child => {
-            if (child instanceof THREE.Mesh) {
+            if (child instanceof THREE.Mesh && child !== groundGeometry) {
                 const currentShader = child.material.name;
                 const newShader = currentShader === 'blinnphong' ? 'gouraud' : 'blinnphong';
 
@@ -115,6 +120,9 @@ export class InputHandler {
                 const uniforms = child.material.uniforms;
                 const newMaterial = this.shaders[newShader].clone();
 
+                const oldTexture = child.material.uniforms._texture.value;
+                oldTexture.needsUpdate = true;
+
                 newMaterial.uniforms = THREE.UniformsUtils.merge([
                     newMaterial.uniforms,
                     {
@@ -125,19 +133,33 @@ export class InputHandler {
                         ambientStrength: { value: uniforms.ambientStrength.value },
                         lightPositions: { value: uniforms.lightPositions.value.slice() },
                         lightColors: { value: uniforms.lightColors.value.slice() },
-                        _texture: { value: uniforms._texture.value },
-                        mappingType: { value: uniforms.mappingType.value }
                     }
                 ]);
 
+                newMaterial.uniforms._texture.value = oldTexture;
+                newMaterial.uniforms.mappingType.value = child.material.uniforms.mappingType.value;
                 newMaterial.name = newShader;
+
                 child.material = newMaterial;
+                console.log(child.material.name)
             }
         });
+    }
 
-        const firstMesh = this.scene.children.find(c => c instanceof THREE.Mesh);
-        if (firstMesh) {
-            console.log('Current Shader:', firstMesh.material.name);
-        }
+    toggleMapping() {
+        const groundGeometry = this.scene.children.find(c => c.geometry instanceof THREE.PlaneGeometry);
+
+        this.scene.children.forEach(child => {
+            if (child instanceof THREE.Mesh && child !== groundGeometry) {
+                const uniforms = child.material.uniforms;
+                if (uniforms?.mappingType) {
+                    uniforms.mappingType.value = (uniforms.mappingType.value + 1) % 3;
+                    // const current = uniforms.mappingType.value;
+                    // if (current === 0 || current === 1) {
+                    //     uniforms.mappingType.value = 1 - current;
+                    // }
+                }
+            }
+        });
     }
 }

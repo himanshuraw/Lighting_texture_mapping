@@ -10,7 +10,10 @@ export const BlinnPhongShader = {
         void main() {
             // Texture coordinate generation
             vec3 pos = position.xyz;
-            if (mappingType == 0) { // Spherical mapping
+            if (mappingType == 2) { // Standard UV mapping
+                vUv = uv;
+            } 
+            else if (mappingType == 0) { // Spherical mapping
                 vec3 pos = position.xyz;
                 float radius = length(pos);
                 float theta = atan(pos.z, pos.x) + PI/2.0;

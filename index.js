@@ -20,11 +20,10 @@ trackball.setTarget(new THREE.Vector3(0, 0, 0))
 
 const lighting = new Lighting(scene);
 lighting.addAmbientLight(0x404040, 0.5);
-lighting.addPointLight(0xffffff, 1.0, new THREE.Vector3(0, 5, 5));
-lighting.addPointLight(0xffffff, 1.0, new THREE.Vector3(-5, 3, 2));
+lighting.addPointLight(0xffeecc, 1.0, new THREE.Vector3(6, 0, 5));
+lighting.addPointLight(0xffeecc, 1.0, new THREE.Vector3(8, -2, 0));
 
-// camera.position.set(10, 3, -4);
-camera.position.set(3, 2, 0);
+camera.position.set(10, 0, -4);
 camera.lookAt(0, 0, 0);
 
 const groundGeometry = new THREE.PlaneGeometry(20, 20);
@@ -60,7 +59,7 @@ const spacing = 1.3;
 const startX = -((dominoCount - 1) * spacing) / 2;
 
 for (let i = 0; i < dominoCount; i++) {
-    const geometry = new THREE.BoxGeometry(0.5, 1.5, 1, 30, 30, 30);
+    const geometry = new THREE.BoxGeometry(0.5, 1.5, 1, 30, 9, 400);
     const domino = new THREE.Mesh(geometry, shaders.gouraud.clone());
 
     const diffuseStrength = Math.floor(i / 3) * 0.5;
@@ -72,7 +71,7 @@ for (let i = 0; i < dominoCount; i++) {
         diffuseStrength: { value: diffuseStrength },
         specularStrength: { value: specularStrength },
         _texture: { value: texture[i % texture.length] },
-        mappingType: { value: i % 2 }
+        mappingType: { value: 2 }
     };
 
 
