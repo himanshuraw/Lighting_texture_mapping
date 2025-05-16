@@ -66,25 +66,21 @@ export class InputHandler {
     }
 
     handleWheel(e) {
-        e.preventDefault(); // Prevent page scrolling
-        const delta = e.deltaY; // Positive for scroll down, negative for scroll up
-        const direction = delta > 0 ? 1 : -1; // Zoom out if scrolling down, zoom in if scrolling up
+        e.preventDefault()
+        const delta = e.deltaY;
+        const direction = delta > 0 ? 1 : -1;
 
-        // Calculate the vector from camera to target
         const target = this.trackballControls.target;
         const cameraToTarget = target.clone().sub(this.camera.position);
         const distance = cameraToTarget.length();
 
-        // Calculate the zoom step
         const zoomStep = direction * this.zoomSpeed;
         const newDistance = distance + zoomStep;
 
-        // Check if the new distance is within bounds
         if (newDistance >= this.minDistance && newDistance <= this.maxDistance) {
-            // Move camera along the camera-to-target direction
-            cameraToTarget.normalize().multiplyScalar(-zoomStep); // Negative because we add to position
+            cameraToTarget.normalize().multiplyScalar(-zoomStep);
             this.camera.position.add(cameraToTarget);
-            this.camera.lookAt(target); // Ensure camera continues looking at target
+            this.camera.lookAt(target);
         }
     }
 
@@ -128,7 +124,9 @@ export class InputHandler {
                         ambientColor: { value: uniforms.ambientColor.value.clone() },
                         ambientStrength: { value: uniforms.ambientStrength.value },
                         lightPositions: { value: uniforms.lightPositions.value.slice() },
-                        lightColors: { value: uniforms.lightColors.value.slice() }
+                        lightColors: { value: uniforms.lightColors.value.slice() },
+                        _texture: { value: uniforms._texture.value },
+                        mappingType: { value: uniforms.mappingType.value }
                     }
                 ]);
 

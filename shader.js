@@ -11,8 +11,9 @@ export const createShader = (camera) => {
         diffuseStrength: { value: 1.0 },
         specularStrength: { value: 1.0 },
         ambientColor: { value: new THREE.Color(0x404040) },
-        ambientStrength: { value: 0.2 }
-
+        ambientStrength: { value: 0.2 },
+        _texture: { value: null },
+        mappingType: { value: 0 }
     };
     return {
         gouraud: new THREE.ShaderMaterial({
