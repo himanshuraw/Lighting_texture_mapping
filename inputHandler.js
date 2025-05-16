@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.128.0';
 import { TrackballControls } from "./trackballControls.js";
+import { textures } from './textures.js';
 
 export class InputHandler {
     constructor(scene, camera, canvas, shaders) {
@@ -19,6 +20,10 @@ export class InputHandler {
         this.zoomSpeed = 0.5;
         this.minDistance = 2;
         this.maxDistance = 20;
+
+        this.isRandomSpacing = false;
+        this.fixedDominoPositions = [];
+
 
         this.init();
     }
@@ -89,12 +94,20 @@ export class InputHandler {
         this.keys.add(key);
 
         switch (key) {
-            case 's':
+            case '1':
                 this.toggleShading();
                 break;
-            case 'm':
+            case '2':
                 this.toggleMapping();
                 break;
+            case '3':
+                this.shuffleDominoes();
+                break;
+            case '4':
+                this.toggleSpacing();
+                break;
+            case '5':
+                this.toggleTextures();
             default:
                 break;
         }
@@ -162,4 +175,78 @@ export class InputHandler {
             }
         });
     }
+
+    shuffleDominoes() {
+        const dominoCount = 9;
+        const spacing = 1.3;
+        const startX = -((dominoCount - 1) * spacing) / 2;
+        const positions = [];
+        for (let i = 0; i < dominoCount; i++) {
+            positions.push(startX + i * spacing);
+        }
+
+        for (let i = positions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [positions[i], positions[j]] = [positions[j], positions[i]];
+        }
+
+        const dominoes = this.scene.children.filter(child =>
+            child instanceof THREE.Mesh &&
+            child.geometry.type === 'BoxGeometry'
+        );
+
+        dominoes.forEach((domino, index) => {
+            domino.position.x = positions[index];
+        });
+    }
+
+    toggleSpacing() {
+        const dominoes = this.scene.children.filter(child =>
+            child instanceof THREE.Mesh &&
+            child.geometry.type === 'BoxGeometry'
+        );
+
+        if (this.isRandomSpacing) {
+            dominoes.forEach((domino, index) => {
+                domino.position.x = this.fixedDominoPositions[index];
+            });
+            this.isRandomSpacing = false;
+        } else {
+            this.fixedDominoPositions = dominoes.map(domino => domino.position.x);
+            const dominoCount = dominoes.length;
+
+            if (dominoCount < 2) return;
+
+            const spacings = [];
+            for (let i = 0; i < dominoCount - 1; i++) {
+                spacings.push(0.5 + Math.random() * 1.5);
+            }
+            const totalLength = spacings.reduce((a, b) => a + b, 0);
+            const startX = -totalLength / 2;
+
+            let currentX = startX;
+            dominoes[0].position.x = currentX;
+            for (let i = 0; i < dominoCount - 1; i++) {
+                currentX += spacings[i];
+                dominoes[i + 1].position.x = currentX;
+            }
+            this.isRandomSpacing = true;
+        }
+    }
+
+    toggleTextures() {
+        const dominoes = this.scene.children.filter(child =>
+            child instanceof THREE.Mesh &&
+            child.geometry.type === 'BoxGeometry'
+        );
+
+        dominoes.forEach(domino => {
+            const currentTexture = domino.material.uniforms._texture.value;
+            const currentIndex = textures.findIndex(tex => tex === currentTexture);
+            const nextIndex = (currentIndex + 1) % textures.length;
+            domino.material.uniforms._texture.value = textures[nextIndex];
+            domino.material.uniforms._texture.needsUpdate = true;
+        });
+    }
+
 }

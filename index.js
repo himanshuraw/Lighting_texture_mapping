@@ -3,7 +3,7 @@ import { InputHandler } from "./inputHandler.js";
 import { TrackballControls } from './trackballControls.js';
 import { createShader } from './shader.js';
 import { Lighting } from './lighting.js';
-import { createCheckerTexture, createTextureFromJPG, createWhiteTexture, createWoodTexture } from './textures.js';
+import { createWhiteTexture, createWoodTexture, textures } from './textures.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -42,18 +42,6 @@ ground.rotation.x = -Math.PI / 2;
 ground.position.y = -0.75;
 scene.add(ground);
 
-// const checkerTexture = createCheckerTexture();
-// const woodTexture = createWoodTexture();
-// const pineTexture = createTextureFromJPG('./Textures/pine_wood.jpg')
-// const plankTexture = createTextureFromJPG('./Textures/plank_wood.jpg')
-
-const texture = [
-    createCheckerTexture(),
-    createWoodTexture(),
-    createTextureFromJPG('./Textures/pine_wood.jpg'),
-    createTextureFromJPG('./Textures/plank_wood.jpg')
-]
-
 const dominoCount = 9;
 const spacing = 1.3;
 const startX = -((dominoCount - 1) * spacing) / 2;
@@ -70,7 +58,7 @@ for (let i = 0; i < dominoCount; i++) {
         diffuseColor: { value: new THREE.Color(0.8, 0.8, 0.8) },
         diffuseStrength: { value: diffuseStrength },
         specularStrength: { value: specularStrength },
-        _texture: { value: texture[i % texture.length] },
+        _texture: { value: textures[0] },
         mappingType: { value: 2 }
     };
 

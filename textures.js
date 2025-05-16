@@ -99,3 +99,12 @@ export function createTextureFromJPG(url) {
 
     return texture;
 }
+
+
+export const textures = [
+    createWhiteTexture(),
+    createCheckerTexture(),
+    createWoodTexture(),
+    createTextureFromJPG('./Textures/pine_wood.jpg'),
+    createTextureFromJPG('./Textures/plank_wood.jpg')
+]
