@@ -16,10 +16,9 @@ export const GouraudShader = {
         #define PI 3.141592653589793
 
         void main() {
-            // Texture coordinate generation
             vec3 pos = position.xyz;
             
-            if (mappingType == 2) { // Standard UV mapping
+            if (mappingType == 2) {
                 vUv = uv;
             } 
             else if (mappingType == 0) { // Spherical
